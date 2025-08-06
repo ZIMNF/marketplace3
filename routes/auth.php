@@ -1,47 +1,60 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\LoginController;
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-// Authentication routes - semua menggunakan /panel
-Route::prefix('panel')->group(function () {
-    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('login', [LoginController::class, 'login']);
-    
-    Route::get('register', [RegisterController::class, 'showForm'])->name('register');
-    Route::post('register', [RegisterController::class, 'submitForm']);
-    
-    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
-});
+class LoginController extends Controller
+{
+    public function __construct()
+    {
+        // Middleware untuk mencegah akses ke halaman login jika sudah login
+        $this->middleware('guest')->except('logout');
+    }
 
-// Redirect root ke /panel
-Route::get('/', function () {
-    return redirect('/panel');
-});
+    /**
+     * Tampilkan halaman form login.
+     */
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
 
-// Redirect legacy auth paths ke /panel
-Route::prefix('auth')->group(function () {
-    Route::get('/', function () {
-        return redirect('/panel');
-    });
-    
-    Route::get('login', function () {
+    /**
+     * Proses login user.
+     */
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            return redirect()->intended('/panel');
+        }
+
+        return back()->withErrors([
+            'email' => 'Email atau password salah.',
+        ])->onlyInput('email');
+    }
+
+    /**
+     * Logout user.
+     */
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect('/panel/login');
-    });
-    
-    Route::get('register', function () {
-        return redirect('/panel/register');
-    });
-});
-
-// Redirect legacy paths
-Route::get('/login', function () {
-    return redirect('/panel/login');
-});
-
-Route::get('/register', function () {
-    return redirect('/panel/register');
-});
+    }
+}

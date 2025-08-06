@@ -4,32 +4,32 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Public Routes
+| Redirect root & legacy paths
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    return redirect('/panel');
-});
-
-Route::get('/home', function () {
-    return redirect('/panel');
-});
+Route::get('/', fn () => redirect('/panel'));
+Route::get('/home', fn () => redirect('/panel'));
+Route::get('/admin', fn () => redirect('/panel'));
 
 /*
 |--------------------------------------------------------------------------
-| Buyer Routes (Authenticated)
+| Redirect legacy auth paths to /panel
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/cart', fn () => view('cart.index'))->name('cart.index');
-    Route::get('/checkout', fn () => view('checkout.index'))->name('checkout.index');
+Route::prefix('auth')->group(function () {
+    Route::get('/', fn () => redirect('/panel'));
+    Route::get('/login', fn () => redirect('/panel/login'));
+    Route::get('/register', fn () => redirect('/panel/register'));
 });
+
+Route::get('/login', fn () => redirect('/panel/login'));
+Route::get('/register', fn () => redirect('/panel/register'));
 
 /*
 |--------------------------------------------------------------------------
-| Seller Routes (Authenticated + Seller Middleware)
+| Seller routes (redirect ke panel)
 |--------------------------------------------------------------------------
 */
 
@@ -42,16 +42,7 @@ Route::prefix('seller')->middleware(['auth', 'seller'])->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Admin Route (Handled by Filament)
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/admin', fn () => redirect('/panel'));
-Route::get('/panel', fn () => redirect('/panel/login'));
-
-/*
-|--------------------------------------------------------------------------
-| Authentication Routes (Login, Logout, etc.)
+| Auth (Login/Logout) handled via custom controller
 |--------------------------------------------------------------------------
 */
 
