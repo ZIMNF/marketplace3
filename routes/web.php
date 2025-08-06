@@ -12,8 +12,13 @@ use App\Http\Controllers\Auth\RegisterController;
 */
 
 Route::get('/', function () {
-    return redirect('/register');
+    return redirect('/panel');
 });
+
+Route::get('/home', function () {
+    return redirect('/panel');
+});
+
 Route::get('/products', [HomeController::class, 'products'])->name('products');
 Route::get('/products/{id}', [HomeController::class, 'productDetail'])->name('product.detail');
 
@@ -37,6 +42,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/cart', fn () => view('cart.index'))->name('cart.index');
     Route::get('/checkout', fn () => view('checkout.index'))->name('checkout.index');
+    Route::get('/buyer/dashboard', fn () => redirect('/panel'))->name('buyer.dashboard');
 });
 
 /*
@@ -59,6 +65,7 @@ Route::prefix('seller')->middleware(['auth', 'seller'])->group(function () {
 */
 
 Route::get('/admin', fn () => redirect('/panel'));
+Route::get('/panel', fn () => redirect('/panel/login'))->name('login');
 
 /*
 |--------------------------------------------------------------------------

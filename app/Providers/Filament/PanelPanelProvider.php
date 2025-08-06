@@ -31,6 +31,11 @@ class PanelPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->loginRouteSlug('login')
+            ->registrationRouteSlug('register')
+            ->passwordResetRouteSlug('password-reset')
+            ->emailVerificationRouteSlug('email-verification')
+            ->profile(isSimple: false)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
