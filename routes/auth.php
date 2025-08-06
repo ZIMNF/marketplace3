@@ -22,7 +22,7 @@ Route::get('/', function () {
     return redirect('/panel');
 });
 
-// Redirect auth ke /panel
+// Redirect legacy auth paths ke /panel
 Route::prefix('auth')->group(function () {
     Route::get('/', function () {
         return redirect('/panel');
@@ -30,9 +30,18 @@ Route::prefix('auth')->group(function () {
     
     Route::get('login', function () {
         return redirect('/panel/login');
-    })->name('auth.login');
+    });
     
     Route::get('register', function () {
         return redirect('/panel/register');
-    })->name('auth.register');
+    });
+});
+
+// Redirect legacy paths
+Route::get('/login', function () {
+    return redirect('/panel/login');
+});
+
+Route::get('/register', function () {
+    return redirect('/panel/register');
 });

@@ -1,9 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Seller\DashboardController;
-use App\Http\Controllers\Auth\RegisterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,20 +16,6 @@ Route::get('/home', function () {
     return redirect('/panel');
 });
 
-Route::get('/products', [HomeController::class, 'products'])->name('products');
-Route::get('/products/{id}', [HomeController::class, 'productDetail'])->name('product.detail');
-
-/*
-|--------------------------------------------------------------------------
-| Guest (Register)
-|--------------------------------------------------------------------------
-*/
-
-Route::middleware('guest')->group(function () {
-    Route::get('/register', [RegisterController::class, 'showForm'])->name('register');
-    Route::post('/register', [RegisterController::class, 'submitForm']);
-});
-
 /*
 |--------------------------------------------------------------------------
 | Buyer Routes (Authenticated)
@@ -42,7 +25,6 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/cart', fn () => view('cart.index'))->name('cart.index');
     Route::get('/checkout', fn () => view('checkout.index'))->name('checkout.index');
-    Route::get('/buyer/dashboard', fn () => redirect('/panel'))->name('buyer.dashboard');
 });
 
 /*
@@ -52,10 +34,10 @@ Route::middleware(['auth'])->group(function () {
 */
 
 Route::prefix('seller')->middleware(['auth', 'seller'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('seller.dashboard');
-    Route::get('/products', [DashboardController::class, 'products'])->name('seller.products');
-    Route::get('/orders', [DashboardController::class, 'orders'])->name('seller.orders');
-    Route::get('/profile', [DashboardController::class, 'profile'])->name('seller.profile');
+    Route::get('/dashboard', fn () => redirect('/panel'))->name('seller.dashboard');
+    Route::get('/products', fn () => redirect('/panel'))->name('seller.products');
+    Route::get('/orders', fn () => redirect('/panel'))->name('seller.orders');
+    Route::get('/profile', fn () => redirect('/panel'))->name('seller.profile');
 });
 
 /*
@@ -65,7 +47,7 @@ Route::prefix('seller')->middleware(['auth', 'seller'])->group(function () {
 */
 
 Route::get('/admin', fn () => redirect('/panel'));
-Route::get('/panel', fn () => redirect('/panel/login'))->name('login');
+Route::get('/panel', fn () => redirect('/panel/login'));
 
 /*
 |--------------------------------------------------------------------------
