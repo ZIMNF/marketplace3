@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -41,7 +42,7 @@ class User extends Authenticatable implements FilamentUser
     }
 
     // Allow access to Filament
-    public function canAccessPanel(): bool
+      public function canAccessPanel(Panel $panel): bool
     {
         return in_array($this->role, ['admin', 'seller', 'buyer']);
     }
