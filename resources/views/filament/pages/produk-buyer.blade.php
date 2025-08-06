@@ -1,3 +1,6 @@
+@php use Illuminate\Support\Facades\Storage; @endphp
+
+
 <x-filament::page>
     <h2 class="text-2xl font-bold mb-4">Produk Tersedia</h2>
 
@@ -5,9 +8,11 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         @foreach ($this->sellerProducts as $item)
             <div class="p-6 border rounded-lg shadow-sm bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                <img src="{{ $item->product->image_url }}" alt="{{ $item->product->name }}" 
+                {{-- ✅ Ganti image_url dengan URL dari S3 --}}
+                <img src="{{ Storage::disk('s3')->url($item->product->image_url) }}" 
+                    alt="{{ $item->product->name }}" 
                     class="w-full h-48 object-cover mb-4 rounded-lg">
-                
+
                 <h3 class="font-bold text-lg mb-2">{{ $item->product->name }}</h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{{ $item->product->description }}</p>
                 
