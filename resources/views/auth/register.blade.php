@@ -66,7 +66,7 @@
             </div>
 
             <p class="text-sm text-gray-600 text-center mt-4">
-                Already have an account? <a href="/panel/login" class="text-amber-600 hover:underline">Login here</a>
+                Already have an account? <a href="/register" class="text-amber-600 hover:underline">Login here</a>
             </p>
         </form>
     </div>
