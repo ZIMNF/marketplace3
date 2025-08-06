@@ -7,8 +7,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Filament\Models\Contracts\FilamentUser;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     use HasFactory, Notifiable;
 
@@ -37,6 +38,12 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_verified' => 'boolean',
         ];
+    }
+
+    // Allow access to Filament
+    public function canAccessPanel(): bool
+    {
+        return in_array($this->role, ['admin', 'seller', 'buyer']);
     }
 
     // Relationships
