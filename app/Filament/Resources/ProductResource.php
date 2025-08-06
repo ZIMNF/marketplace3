@@ -20,32 +20,33 @@ class ProductResource extends Resource
 
     protected static ?string $navigationGroup = 'Product Management';
 
-    public static function form(Form $form): Form
-    {
-        return $form->schema([
-            Forms\Components\TextInput::make('name')
-                ->required()
-                ->maxLength(255),
+   public static function form(Form $form): Form
+{
+    return $form->schema([
+        Forms\Components\TextInput::make('name')
+            ->required()
+            ->maxLength(255),
 
-            Forms\Components\FileUpload::make('image_url')
-                ->label('Product Image')
-                ->image()
-                ->imageEditor()
-                ->imageEditorAspectRatios([
-                    '16:9',
-                    '4:3',
-                    '1:1',
-                ])
-                ->acceptedFileTypes(['image/jpeg', 'image/jpg', 'image/png', 'image/webp'])
-                ->rules(['image', 'mimes:jpeg,jpg,png,webp', 'max:2048'])
-                ->directory('products')
-                ->disk('public')
-                ->required(),
+        Forms\Components\FileUpload::make('image_url')
+            ->label('Product Image')
+            ->image()
+            ->imageEditor()
+            ->imageEditorAspectRatios([
+                '16:9',
+                '4:3',
+                '1:1',
+            ])
+            ->acceptedFileTypes(['image/jpeg', 'image/jpg', 'image/png', 'image/webp'])
+            ->rules(['image', 'mimes:jpeg,jpg,png,webp', 'max:2048'])
+            ->directory('products')
+            ->disk('s3') // ✅ simpan ke AWS S3
+            ->visibility('public') // ✅ agar bisa diakses publik
+            ->required(),
 
-            Forms\Components\Textarea::make('description')
-                ->rows(4),
-        ]);
-    }
+        Forms\Components\Textarea::make('description')
+            ->rows(4),
+    ]);
+}
 
     public static function mutateFormDataBeforeCreate(array $data): array
     {
