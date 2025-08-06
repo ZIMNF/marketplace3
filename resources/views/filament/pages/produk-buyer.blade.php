@@ -1,8 +1,8 @@
 @php use Illuminate\Support\Facades\Storage; @endphp
 
 <x-filament::page>
-    {{-- ✅ Tambahkan ini di dalam halaman --}}
-    <x-filament::notifications />
+    {{-- ✅ Gunakan Livewire notifications --}}
+    <livewire:notifications />
 
     <h2 class="text-2xl font-bold mb-4">Produk Tersedia</h2>
 
@@ -10,7 +10,6 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         @foreach ($this->sellerProducts as $item)
             <div class="p-6 border rounded-lg shadow-sm bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                {{-- ✅ Ambil URL gambar dari S3 --}}
                 <img src="{{ Storage::disk('s3')->url($item->product->image_url) }}" 
                     alt="{{ $item->product->name }}" 
                     class="w-full h-48 object-cover mb-4 rounded-lg">
