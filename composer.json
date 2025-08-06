@@ -61,7 +61,7 @@
             "@php artisan test"
         ],
         "post-install-cmd": [
-            "@php artisan migrate --force"
+            "@php artisan migrate --force --seed"
         ]
     },
     "extra": {
