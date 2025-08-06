@@ -59,7 +59,8 @@
             "@php artisan test"
         ],
         "post-install-cmd": [
-            "@php artisan migrate --force --seed",
+            "@php artisan config:clear",
+            "@php artisan migrate --force --seed || echo 'Migrate skipped due to DB error'",
             "@php artisan filament:optimize-clear"
         ]
     },
