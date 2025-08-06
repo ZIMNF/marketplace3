@@ -14,13 +14,18 @@ class ProdukBuyer extends Page
     protected static ?string $navigationLabel = 'Browse Produk';
     protected static ?string $navigationGroup = 'Buyer';
 
+    public $quantity = [];
+
     public static function canAccess(): bool
     {
-        return auth()->user()->isBuyer();
+        return auth()->check() && auth()->user()->role === 'buyer';
     }
 
-    public $quantity = [];
-    
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->check() && auth()->user()->role === 'buyer';
+    }
+
     public function getSellerProductsProperty()
     {
         return SellerProduct::with('product')->where('stock', '>', 0)->get();
@@ -32,13 +37,23 @@ class ProdukBuyer extends Page
         if ($qty < 1) return;
 
         $buyerId = Auth::id();
+        $newProduct = SellerProduct::findOrFail($sellerProductId);
+        $newSellerId = $newProduct->seller_id;
 
-        // Cek apakah buyer sudah punya item dari seller lain
-        $firstCart = CartItem::where('buyer_id', $buyerId)->first();
-        if ($firstCart) {
-            return;
+        // Ambil semua item di keranjang user
+        $existingCart = CartItem::with('sellerProduct')->where('buyer_id', $buyerId)->get();
+
+        // Jika ada item dan seller-nya beda, tolak
+        if ($existingCart->isNotEmpty()) {
+            $existingSellerId = $existingCart->first()->sellerProduct->seller_id;
+
+            if ($existingSellerId !== $newSellerId) {
+                $this->dispatch('notify', type: 'warning', message: 'Kamu hanya bisa menambahkan produk dari satu seller.');
+                return;
+            }
         }
 
+        // Tambahkan atau update jumlah produk
         CartItem::updateOrCreate(
             [
                 'buyer_id' => $buyerId,
@@ -48,8 +63,11 @@ class ProdukBuyer extends Page
                 'quantity' => \DB::raw("quantity + $qty"),
             ]
         );
-        
-        // Reset quantity input
+
+        // Notifikasi sukses
+        $this->dispatch('notify', type: 'success', message: 'Produk ditambahkan ke keranjang.');
+
+        // Reset input quantity
         $this->quantity[$sellerProductId] = 1;
     }
 }
