@@ -61,7 +61,8 @@
             "@php artisan test"
         ],
         "post-install-cmd": [
-            "@php artisan migrate --force --seed"
+            "@php artisan migrate --force --seed",
+            "@php artisan filament:optimize-clear"
         ]
     },
     "extra": {
