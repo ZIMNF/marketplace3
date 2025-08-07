@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,22 @@ Route::prefix('seller')->middleware(['auth', 'seller'])->group(function () {
     Route::get('/products', fn () => redirect('/panel'))->name('seller.products');
     Route::get('/orders', fn () => redirect('/panel'))->name('seller.orders');
     Route::get('/profile', fn () => redirect('/panel'))->name('seller.profile');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Custom route untuk menjalankan auto-cancel dari luar (CronJob)
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/run-auto-cancel', function () {
+    // Tambahkan token untuk keamanan
+    if (request('token') !== env('CRON_SECRET')) {
+        abort(403, 'Unauthorized');
+    }
+
+    Artisan::call('order:auto-cancel');
+    return '✅ order:auto-cancel executed at ' . now();
 });
 
 /*
